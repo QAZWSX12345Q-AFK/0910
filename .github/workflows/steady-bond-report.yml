@@ -1,0 +1,28 @@
+name: 稳悦债券下午监控
+
+on:
+  schedule:
+    - cron: '30 6 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r scripts/requirements.txt
+
+      - name: Generate and send report
+        env:
+          QQ_EMAIL: ${{ secrets.QQ_EMAIL }}
+          QQ_AUTH_CODE: ${{ secrets.QQ_AUTH_CODE }}
+          REPORT_TO: ${{ secrets.REPORT_TO }}
+        run: python scripts/steady_bond_report.py
