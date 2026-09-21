@@ -1,0 +1,28 @@
+name: 稳悦债券下午监控
+
+on:
+  schedule:
+    - cron: "30 14 * * 1-5"
+      timezone: "Asia/Shanghai"
+  workflow_dispatch:
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install --no-cache-dir akshare pandas
+
+      - name: Generate and send report
+        env:
+          QQ_EMAIL: ${{ secrets.QQ_EMAIL }}
+          QQ_AUTH_CODE: ${{ secrets.QQ_AUTH_CODE }}
+        run: python scripts/stable_yue_report.py
